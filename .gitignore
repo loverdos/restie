@@ -1,0 +1,16 @@
+.DS_Store
+.ensime
+test.scala
+target/
+.idea/
+*.iml
+lib_managed/
+lib/
+out/
+target/
+project/boot/
+project/build/target
+project/plugins/lib_managed/
+project/plugins/src_managed/
+project/plugins/target/
+project/plugins/project/
