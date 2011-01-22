@@ -3,11 +3,14 @@
 test.scala
 target/
 .idea/
+.gradle/
+build.gradle
 *.iml
 lib_managed/
 lib/
 out/
 target/
+build/
 project/boot/
 project/build/target
 project/plugins/lib_managed/
