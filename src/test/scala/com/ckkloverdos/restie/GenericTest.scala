@@ -9,6 +9,8 @@ import org.junit.Assert._
  * @author Christos KK Loverdos.
  */
 
+class DefaultRoutingContext extends RestRoutingContext
+
 class GenericTest {
   val Rest1 = "rest1"
   val Rest2 = "rest2"
@@ -31,7 +33,7 @@ class GenericTest {
   val t1 = List(Rest1, MyFirstCustomer, LordOfTheRings).mkString("/", "/", "")
   val t2 = List(Rest2, MyBalances).mkString("/", "/", "")
 
-  val rc = new DefaultRestRoutingContext
+  val rc = new DefaultRoutingContext
 
   private def assertSome[A](x: Option[A]) =
     assertTrue(x.isDefined)
@@ -59,144 +61,148 @@ class GenericTest {
     _testMatcher(t2, p2, VarMap2)
 
   @Test
-  def routeDefault_1 = {
+  def routeUnhandledPath {
     var routed = false
-    val handler = new {
-      def routeDefault(rc: DefaultRestRoutingContext, method: String, path: String) {
-        routed = true
-      }
-    }
+    val handler = new {}
 
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
-    router.route("GET", t1)
+    val router = new ReflectiveRestRouter(mgr, handler)
+    try {
+      router.route(rc, "GET", t1)
+    }
+    catch {
+      case _: RestRoutingUnhandledPathException =>
+      routed = true
+    }
     assertEquals(true, routed)
   }
 
   @Test
-  def routeUnmatched_1 = {
+  def routeUnknownPath_1 {
     var routed = false
-    val handler = new {
-      def routeUnmatched(rc: DefaultRestRoutingContext, method: String, path: String) {
-        routed = true
-      }
-    }
+    val handler = new {}
 
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
-    router.route("GET", "/Some garbage that will not match/")
+    val router = new ReflectiveRestRouter(mgr, handler)
+    try {
+      router.route(rc, "GET", "/Some garbage that will not match/")
+    }
+    catch {
+      case _: RestRoutingUnknownPathException =>
+      routed = true
+    }
     assertEquals(true, routed)
   }
 
   @Test
-  def testRouterVarArgs_1 = {
+  def testRouterVarArgs_1 {
     var routed = false
     var customer: String = null
     var book: String = null
     val handler = new {
-      def GET_CUST(rc: DefaultRestRoutingContext, _customer: String, _book: String): Unit = {
+      def GET_CUST(rc: DefaultRoutingContext, _customer: String, _book: String): Unit = {
         customer = _customer
         book = _book
         routed = true
       }
     }
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
+    val router = new ReflectiveRestRouter(mgr, handler)
     
-    router.route("GET", t1)
+    router.route(rc, "GET", t1)
     assertEquals(true, routed)
     assertEquals(MyFirstCustomer, customer)
     assertEquals(LordOfTheRings, book)
   }
 
   @Test
-  def testRouterMap_1 = {
+  def testRouterMap_1 {
     var routed = false
     var customer: String = null
     var book: String = null
     val handler = new {
-      def GET_CUST(rc: DefaultRestRoutingContext, valueMap: Map[String, String]): Unit = {
+      def GET_CUST(rc: DefaultRoutingContext, valueMap: Map[String, String]): Unit = {
         assertEquals(2, valueMap.size)
         customer = valueMap(_Customer)
         book     = valueMap(_Book)
         routed = true
       }
     }
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
+    val router = new ReflectiveRestRouter(mgr, handler)
 
-    router.route("GET", t1)
+    router.route(rc, "GET", t1)
     assertEquals(true, routed)
     assertEquals(MyFirstCustomer, customer)
     assertEquals(LordOfTheRings, book)
   }
 
   @Test
-  def testRouterJavaMap_1 = {
+  def testRouterJavaMap_1 {
     var routed = false
     var customer: String = null
     var book: String = null
     val handler = new {
-      def GET_CUST(rc: DefaultRestRoutingContext, valueMap: java.util.Map[String, String]): Unit = {
+      def GET_CUST(rc: DefaultRoutingContext, valueMap: java.util.Map[String, String]): Unit = {
         assertEquals(2, valueMap.size)
         customer = valueMap.get(_Customer)
         book     = valueMap.get(_Book)
         routed = true
       }
     }
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
+    val router = new ReflectiveRestRouter(mgr, handler)
 
-    router.route("GET", t1)
+    router.route(rc, "GET", t1)
     assertEquals(true, routed)
     assertEquals(MyFirstCustomer, customer)
     assertEquals(LordOfTheRings, book)
   }
 
   @Test
-  def testRouterVarArgs_2 = {
+  def testRouterVarArgs_2 {
     var routed = false
     var balances: String = null
     val handler = new {
-      def GET_BALN(rc: DefaultRestRoutingContext, _balances: String): Unit = {
+      def GET_BALN(rc: DefaultRoutingContext, _balances: String): Unit = {
         balances = _balances
         routed = true
       }
     }
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
+    val router = new ReflectiveRestRouter(mgr, handler)
 
-    router.route("GET", t2)
+    router.route(rc, "GET", t2)
     assertEquals(true, routed)
     assertEquals(MyBalances, balances)
   }
 
   @Test
-  def testRouterMap_2 = {
+  def testRouterMap_2 {
     var routed = false
     var balances: String = null
     val handler = new {
-      def GET_BALN(rc: DefaultRestRoutingContext, valueMap: Map[String, String]): Unit = {
+      def GET_BALN(rc: DefaultRoutingContext, valueMap: Map[String, String]): Unit = {
         assertEquals(1, valueMap.size)
         balances = valueMap(_Balances)
         routed = true
       }
     }
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
+    val router = new ReflectiveRestRouter(mgr, handler)
 
-    router.route("GET", t2)
+    router.route(rc, "GET", t2)
     assertEquals(true, routed)
     assertEquals(MyBalances, balances)
   }
 
   @Test
-  def testRouterJavaMap_2 = {
+  def testRouterJavaMap_2 {
     var routed = false
     var balances: String = null
     val handler = new {
-      def GET_BALN(rc: DefaultRestRoutingContext, valueMap: java.util.Map[String, String]): Unit = {
+      def GET_BALN(rc: DefaultRoutingContext, valueMap: java.util.Map[String, String]): Unit = {
         assertEquals(1, valueMap.size)
         balances = valueMap.get(_Balances)
         routed = true
       }
     }
-    val router = new ReflectiveRestRouter(rc, mgr, handler)
+    val router = new ReflectiveRestRouter(mgr, handler)
 
-    router.route("GET", t2)
+    router.route(rc, "GET", t2)
     assertEquals(true, routed)
     assertEquals(MyBalances, balances)
   }
