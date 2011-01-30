@@ -59,8 +59,32 @@ object RestPathPattern {
     parts.map(part => stripStartSlash(stripEndSlash(part))).mkString ("/", "/", "")
 }
 
+/**
+ * A specification for a REST URI. The specification is encoded in a string which
+ * has a path-like form. The path always starts with a slash character. The slash character
+ * separates the path elements.
+ *
+ * A path element is either a fixed name or a variable name. Variables are encoded in curly braces, so
+ * that the following pattern
+ * {{{
+ * /rest/{customer}
+ * }}}
+ * specifies a variable named `customer`.
+ *
+ * The intention is that when a URL arrives, a [[com.ckkloverdos.restie.RestPathManager]] decodes it according
+ * to registered patterns, and respective parts of the URI are recorded as values for the specified pattern variables.
+ * So, regarding the previous URI, if this arrives at a server usign the restie library
+ * {{{
+ * /rest/MyCustomer
+ * }}}
+ * then the value `MyCustomer` will be given to the variable `customer`.
+ *
+ * After the URI evaluation procedure described above takes place, a [[com.ckkloverdos.restie.RestRouter]] is responsible to
+ * handle the particular request.
+ * 
+ * @author Christos KK Loverdos
+ */
 class RestPathPattern(val name: String, _pattern: String) extends Cloneable {
-//  println("** _pattern = " + _pattern)
   if(null eq _pattern) {
     throw new IllegalArgumentException("null pattern");
   } else if(!_pattern.startsWith("/")) {

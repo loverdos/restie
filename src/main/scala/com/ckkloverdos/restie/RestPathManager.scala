@@ -16,8 +16,6 @@
 
 package com.ckkloverdos.restie
 
-//import RestLog.log
-
 class RestPathManager {
 
   type Length = Int

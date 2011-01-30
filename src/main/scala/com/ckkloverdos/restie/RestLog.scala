@@ -19,6 +19,7 @@ package com.ckkloverdos.restie
 import org.slf4j.LoggerFactory
 
 /**
+ * Provides the library-wide logger. The logger is based on slf4j.
  * 
  * @author Christos KK Loverdos.
  */

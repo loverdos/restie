@@ -18,13 +18,12 @@ package com.ckkloverdos.restie
 
 import scala.collection.JavaConverters._
 import java.lang.Class
-import org.slf4j.LoggerFactory
 import java.lang.reflect.{InvocationTargetException, Method}
 
 import RestLog.log
 
 /**
- * Provides logic that routes a given URI path according to which {@link RestPathPattern} can match the path.
+ * Provides logic that routes a given URI path according to which [[com.ckkloverdos.restie.RestPathPattern]] can match the path.
  */
 trait RestRouter {
   def pathManager: RestPathManager
