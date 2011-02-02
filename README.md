@@ -22,6 +22,7 @@ is routed to a method with the following signature:
 	def GET_BOOK_ORDER(rctx: RestRoutingContext,
 	                     customer: String, bookOrder: String): Unit
 	
+with `customer` and `bookOrder` given the appropriate values from the URI.
 The `rctx` parameter must always be of a subclass of `RestRoutingContext`, whose role
 is to hold contextual information about the request. Under a servlet container environment,
 a typical case is the `SimpleServletRoutingContext` which provides the servlet request and
